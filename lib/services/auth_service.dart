@@ -80,7 +80,9 @@ class AuthService {
           password: data.password,
         );
 
+
         await storeCredentialToLocal(user);
+        print(user.phoneNumber);
 
         return user;
       } else {
@@ -120,7 +122,7 @@ class AuthService {
       await storage.write(key: 'token', value: user.token);
       await storage.write(key: 'email', value: user.email);
       await storage.write(key: 'password', value: user.password);
-      await storage.write(key: 'phone_number', value: user.phoneNumber);
+      // await storage.write(key: 'phone_number', value: user.phoneNumber);
 
       print('success');
     } catch (e) {
@@ -163,18 +165,18 @@ class AuthService {
     return token;
   }
 
-  Future<String> getNumber() async {
-    String phoneNumber = '';
+  // Future<String> getNumber() async {
+  //   String phoneNumber = '';
 
-    const storage = FlutterSecureStorage();
-    String? value = await storage.read(key: 'phone_number');
+  //   const storage = FlutterSecureStorage();
+  //   String? value = await storage.read(key: 'phone_number');
 
-    if (value != null) {
-      phoneNumber = 'Bearer ' + value;
-    }
+  //   if (value != null) {
+  //     phoneNumber = 'Bearer ' + value;
+  //   }
 
-    return phoneNumber;
-  }
+  //   return phoneNumber;
+  // }
 
   Future<void> clearLocalStorage() async {
     try {

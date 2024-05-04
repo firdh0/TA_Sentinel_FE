@@ -63,11 +63,11 @@ class UserModel{
   }) => UserModel(
     id: id,
     username: username ?? this.username,
-    name: name ?? this.username,
+    name: name ?? this.name,
     email: email ?? this.email,
     pin: pin ?? this.pin,
     password: password ?? this.password,
-    phoneNumber: phoneNumber,
+    phoneNumber: phoneNumber ?? this.phoneNumber,
     verified: verified,
     profilePicture: profilePicture,
     token: token

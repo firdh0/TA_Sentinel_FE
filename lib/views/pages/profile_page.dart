@@ -36,109 +36,117 @@ class ProfilePage extends StatelessWidget {
             );
           }
 
-          return ListView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24,
-            ),
-
-            children: [
-              const SizedBox(
-                height: 40,
+          if (state is AuthSuccess) {
+            return ListView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
               ),
 
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 30,
-                  vertical: 22,
+              children: [
+                const SizedBox(
+                  height: 40,
                 ),
 
-                decoration: BoxDecoration(
-                  color: whiteColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 22,
+                  ),
 
-                child: Column(
-                  children: [
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: AssetImage(
-                            'assets/img_profile.png'
+                  decoration: BoxDecoration(
+                    color: whiteColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: state.user.profilePicture == null 
+                              ? const AssetImage(
+                                  'assets/img_profile.png'
+                                ) 
+                              : NetworkImage(
+                                  state.user.profilePicture!
+                                ) as ImageProvider,
                           ),
                         ),
-                      ),
-                  
-                      child: Align(
-                        alignment: Alignment.topRight,
-                        child: Container(
-                          width: 28,
-                          height: 28,
-                  
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: whiteColor, 
-                          ),
-                  
-                          child: Center(
-                            child: Icon(
-                              Icons.check_circle,
-                              color: greenColor,
-                              size: 24,
+                    
+                        child: state.user.verified == 1 ? Align(
+                          alignment: Alignment.topRight,
+                          child: Container(
+                            width: 28,
+                            height: 28,
+                    
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: whiteColor, 
+                            ),
+                    
+                            child: Center(
+                              child: Icon(
+                                Icons.check_circle,
+                                color: greenColor,
+                                size: 24,
+                              ),
                             ),
                           ),
+                        ) : null,
+                      ),
+
+                      const SizedBox(
+                        height: 16,
+                      ),
+
+                      Text(
+                        state.user.username.toString(),
+                        style: blackTextStyle.copyWith(
+                          fontSize: 18,
+                          fontWeight: medium,
                         ),
                       ),
-                    ),
 
-                    const SizedBox(
-                      height: 16,
-                    ),
-
-                    Text(
-                      'firdhokk',
-                      style: blackTextStyle.copyWith(
-                        fontSize: 18,
-                        fontWeight: medium,
+                      const SizedBox(
+                        height: 40,
                       ),
-                    ),
 
-                    const SizedBox(
-                      height: 40,
-                    ),
-
-                    ProfileMenuItem(
-                      iconUrl: 'assets/ic_edit_profile.png', 
-                      title: 'Sunting Profil',
-                      onTap: () async{
-                        if(await Navigator.pushNamed(context, '/pin') == true){
-                          Navigator.pushNamed(context, '/profile-edit');
-                        }
-                      },
-                    ),
-                    ProfileMenuItem(
-                      iconUrl: 'assets/ic_pin.png', 
-                      title: 'Edit PIN',
-                      onTap: () async{
-                        if(await Navigator.pushNamed(context, '/pin') == true){
-                          Navigator.pushNamed(context, '/profile-edit-pin');
-                        }
-                      },
-                    ),
-                    ProfileMenuItem(
-                      iconUrl: 'assets/ic_logout.png', 
-                      title: 'Keluar',
-                      onTap: (){
-                        context.read<AuthBloc>().add(AuthLogout());
-                      },
-                    ),
-                  ],
+                      ProfileMenuItem(
+                        iconUrl: 'assets/ic_edit_profile.png', 
+                        title: 'Sunting Profil',
+                        onTap: () async{
+                          if(await Navigator.pushNamed(context, '/pin') == true){
+                            Navigator.pushNamed(context, '/profile-edit');
+                          }
+                        },
+                      ),
+                      ProfileMenuItem(
+                        iconUrl: 'assets/ic_pin.png', 
+                        title: 'Edit PIN',
+                        onTap: () async{
+                          if(await Navigator.pushNamed(context, '/pin') == true){
+                            Navigator.pushNamed(context, '/profile-edit-pin');
+                          }
+                        },
+                      ),
+                      ProfileMenuItem(
+                        iconUrl: 'assets/ic_logout.png', 
+                        title: 'Keluar',
+                        onTap: (){
+                          context.read<AuthBloc>().add(AuthLogout());
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          );
+              ],
+            );
+          }
+          
+          return Container();
         },
       )
     );

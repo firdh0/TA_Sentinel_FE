@@ -32,6 +32,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       nameController.text = authState.user.name!;
       emailController.text = authState.user.email!;
       passwordController.text = authState.user.password!;
+
+      print(usernameController);
+      print(nameController);
     }    
   }
 
