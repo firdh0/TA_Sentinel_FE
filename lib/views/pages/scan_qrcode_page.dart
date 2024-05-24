@@ -34,6 +34,14 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
     
     return Scaffold(
       backgroundColor: lightBackgroundColor,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Image.asset(
+          'assets/sentinel_appbar.png', // Sesuaikan dengan path logo Anda
+          height: 34,
+        ),
+        centerTitle: true,
+      ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthFailed) {
@@ -56,25 +64,30 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
 
           return ListView(
             padding: const EdgeInsets.symmetric(
-              horizontal: 24,
+              horizontal: 22,
+              vertical: 24
             ),
             children: [
-              Container(
-                width: 155,
-                height: 50,
-                margin: const EdgeInsets.only(
-                  top: 100,
-                  bottom: 70,
+              Text(
+                "Pindai Kode QR",
+                style: blackTextStyle.copyWith(
+                  fontSize: 20,
+                  fontWeight: bold,
                 ),
-                decoration: const BoxDecoration(
-                  image: DecorationImage(image: AssetImage('assets/logo.png')),
-                ),
+                textAlign: TextAlign.center,
               ),
-              Text('Pindai kode QR &\nAmankan WhatsApp',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 20,
-                    fontWeight: semiBold,
-                  )),
+
+              const SizedBox(
+                height: 10,
+              ),
+
+              Text(
+                "Eitss, pindai kode QR berikut untuk\nterhubung dengan WhatsApp anda",
+                style: blackTextStyle.copyWith(
+                  fontSize: 16,
+                ),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(
                 height: 30,
               ),
@@ -86,19 +99,6 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
                 ),
                 child: Column(
                   children: [
-                    // Container(
-                    //   width: 120,
-                    //   height: 120,
-                    //   decoration: BoxDecoration(
-                    //     shape: BoxShape.circle,
-                    //     color: lightBackgroundColor,
-                    //   ),
-                    //   child: Center(child: Image.asset(
-                    //       'assets/ic_upload.png',
-                    //       width: 32,
-                    //     ),
-                    //   ),
-                    // ),
 
                     Container(
                       width: 120,
@@ -110,18 +110,6 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
                           image: AssetImage('assets/qr_code.png'),
                         ),
                       ),
-                    ),
-
-                    const SizedBox(
-                      height: 50,
-                    ),
-
-                    Text(
-                      'Pindai kode QR di atas untuk\nterhubung dengan WhatsApp Anda',
-                      style: greyTextStyle.copyWith(
-                        fontSize: 16,
-                      ),
-                      textAlign: TextAlign.center,
                     ),
 
                     const SizedBox(

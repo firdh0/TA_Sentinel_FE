@@ -34,8 +34,17 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: lightBackgroundColor,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Image.asset(
+          'assets/sentinel_appbar.png', // Sesuaikan dengan path logo Anda
+          height: 34,
+        ),
+        centerTitle: true,
+      ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           
@@ -69,34 +78,47 @@ class _SignUpPageState extends State<SignUpPage> {
           }
           return ListView(
             padding: const EdgeInsets.symmetric(
-              horizontal: 24,
+              horizontal: 22,
+              vertical: 24
             ),
             children: [
               Container(
-                width: 155,
-                height: 50,
+                width: screenWidth * 0.5,
+                height: 260,
                 margin: const EdgeInsets.only(
-                  top: 100,
-                  bottom: 70,
+                  bottom: 50,
                 ),
                 decoration: const BoxDecoration(
-                  image: DecorationImage(image: AssetImage('assets/logo.png')),
+                  image: DecorationImage(image: AssetImage('assets/daftar.png')),
                 ),
               ),
-              Text('Gabung Untuk\nMenggunakan Fiturnya',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 20,
-                    fontWeight: semiBold,
-                  )),
+
+              Text(
+                "Daftar",
+                style: blackTextStyle.copyWith(
+                  fontSize: 20,
+                  fontWeight: bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(
+                height: 10,
+              ),
+
+              Text(
+                "Yuk Gabung!, jaga WhatsApp kamu\ntetap aman dari phishing.\naman Bareng, santai Bareng!",
+                style: blackTextStyle.copyWith(
+                  fontSize: 16,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
               const SizedBox(
                 height: 30,
               ),
+              
               Container(
-                padding: const EdgeInsets.all(22),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: whiteColor,
-                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -138,7 +160,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
 
                     const SizedBox(
-                      height: 30,
+                      height: 50,
                     ),
 
                     CustomFilledButton(
@@ -156,16 +178,16 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
               const SizedBox(
-                height: 50,
+                height: 20,
               ),
-              CustomTextButton(
+              CustomGreyFilledButton(
                 title: 'Masuk',
                 onPressed: () {
                   Navigator.pushNamed(context, '/sign-in');
                 },
               ),
               const SizedBox(
-                height: 50,
+                height: 30,
               ),
             ],
           );

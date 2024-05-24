@@ -37,6 +37,7 @@ class ProfileMenuItem extends StatelessWidget {
             Text(
               title,
               style: blackTextStyle.copyWith(
+                fontSize: 17,
                 fontWeight: medium,
               ),
             ),

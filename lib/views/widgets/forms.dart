@@ -24,7 +24,7 @@ class CustomFormFilled  extends StatelessWidget {
         Text(
           title,
           style: blackTextStyle.copyWith(
-            fontWeight: medium,
+            fontWeight: semiBold,
           ),
         ),
 
@@ -37,8 +37,21 @@ class CustomFormFilled  extends StatelessWidget {
           controller: controller,
           keyboardType: keyboardType,
           decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
+            // border: OutlineInputBorder(
+            //   borderRadius: BorderRadius.circular(50),
+            // ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: grey4Color, // Ubah warna disini
+              ),
+              borderRadius: BorderRadius.circular(50),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                width: 2.0,
+                color: Colors.blue, // Ubah warna disini
+              ),
+              borderRadius: BorderRadius.circular(50),
             ),
             contentPadding: const EdgeInsets.all(12),
           ),

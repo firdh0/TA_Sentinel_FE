@@ -13,8 +13,18 @@ class ScanQrcodeSuccessPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center ,
           children: [
+            Container(
+                // width: screenWidth * 0.5,
+              height: 330,
+              margin: const EdgeInsets.only(
+                  bottom: 50,
+              ),
+              decoration: const BoxDecoration(
+                image: DecorationImage(image: AssetImage('assets/success.png')),
+              ),
+            ),
             Text(
-              'WhatsApp Telah\nTerhubung',
+              'WhatsApp telah\nterhubung',
               style: blackTextStyle.copyWith(
                 fontSize: 20,
                 fontWeight: semiBold,
@@ -23,11 +33,11 @@ class ScanQrcodeSuccessPage extends StatelessWidget {
             ),
 
             const SizedBox(
-              height: 26,
+              height: 10,
             ),
 
             Text(
-              'Amankan Pesan WhatsApp\nSekarang Juga',
+              'Amankan pesan WhatsApp\nsekarang juga',
               style: greyTextStyle.copyWith(
                 fontSize: 16,
               ),

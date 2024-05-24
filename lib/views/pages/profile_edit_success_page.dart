@@ -7,12 +7,31 @@ class ProfileEditSuccessPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: lightBackgroundColor,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Image.asset(
+          'assets/sentinel_appbar.png', // Sesuaikan dengan path logo Anda
+          height: 34,
+        ),
+        centerTitle: true,
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center ,
           children: [
+            Container(
+                // width: screenWidth * 0.5,
+              height: 330,
+              margin: const EdgeInsets.only(
+                  bottom: 50,
+              ),
+              decoration: const BoxDecoration(
+                image: DecorationImage(image: AssetImage('assets/success.png')),
+              ),
+            ),
             Text(
               'Berhasil Diperbarui',
               style: blackTextStyle.copyWith(
@@ -23,12 +42,12 @@ class ProfileEditSuccessPage extends StatelessWidget {
             ),
 
             const SizedBox(
-              height: 26,
+              height: 10,
             ),
 
             Text(
-              'Amankan Pesan WhatsApp\nSekarang Juga',
-              style: greyTextStyle.copyWith(
+              'Amankan pesan WhatsApp\nsekarang juga',
+              style: blackTextStyle.copyWith(
                 fontSize: 16,
               ),
               textAlign: TextAlign.center,

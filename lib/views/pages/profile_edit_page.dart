@@ -41,6 +41,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: lightBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Sunting Profil',
@@ -66,7 +67,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
           return ListView(
             padding: const EdgeInsets.symmetric(
-              horizontal: 24,
+              horizontal: 22,
             ),
             children: [
               const SizedBox(
@@ -74,12 +75,6 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               ),
 
               Container(
-                padding: const EdgeInsets.all(22),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: whiteColor,
-                ),
-
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

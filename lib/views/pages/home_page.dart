@@ -9,16 +9,33 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: lightBackgroundColor,
-      body: ListView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 24,
-        ),
+      body: Stack(
         children: [
-          buildProfile(context),
-          buildWalletCard(),
-          buildFeature(),
+          ListView(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24,
+            ),
+            children: [
+              buildProfile(context),
+              buildWalletCard(),
+              buildFeature(),
+            ],
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              alignment: Alignment.center,
+              child: Image.asset(
+                'assets/bg_homepage.png', // Sesuaikan dengan path gambar Anda
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -40,7 +57,7 @@ class HomePage extends StatelessWidget {
                   children: [
                     Text(
                       'Howdy,',
-                      style: greyTextStyle.copyWith(
+                      style: blackTextStyle.copyWith(
                         fontSize: 16,
                       ),
                     ),
@@ -50,8 +67,8 @@ class HomePage extends StatelessWidget {
                     Text(
                       state.user.username.toString(),
                       style: blackTextStyle.copyWith(
-                        fontSize: 20,
-                        fontWeight: semiBold,
+                        fontSize: 24,
+                        fontWeight: bold,
                       ),
                     ),
                   ],
@@ -119,7 +136,7 @@ class HomePage extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(28),
               image: const DecorationImage(
-                fit: BoxFit.cover,
+                // fit: BoxFit.cover,
                 image: AssetImage('assets/img_bg_card.png'),
               ),
             ),
@@ -127,7 +144,7 @@ class HomePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Nomor Whatsapp',
+                  'Nomor WhatsApp',
                   style: whiteTextStyle.copyWith(
                     fontSize: 18,
                     fontWeight: medium,
@@ -248,7 +265,7 @@ class HomePage extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: whiteColor,
+              color: grey5Color,
             ),
             child: Column(
               children: const [
