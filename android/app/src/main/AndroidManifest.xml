@@ -1,9 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.chat_armor">
    <application
-        android:label="chat_armor"
+        android:label="Sentinel"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/sentinel">
         <activity
             android:name=".MainActivity"
             android:exported="true"
