@@ -10,6 +10,7 @@ import 'package:chat_armor/views/pages/scan_qrcode_page.dart';
 import 'package:chat_armor/views/widgets/buttons.dart';
 import 'package:chat_armor/views/widgets/forms.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 class SignUpSetProfilePage extends StatefulWidget {
@@ -32,6 +33,40 @@ class _SignUpSetProfilePageState extends State<SignUpSetProfilePage> {
     }
 
     return true;
+  }
+
+  Future<void> startSession(String sessionName) async {
+    var url = Uri.parse('https://901f-2001-448a-5110-9379-f908-3312-56fd-d44c.ngrok-free.app/api/sessions/start');
+
+    var requestBody = {
+      'name': sessionName, //sesuaikan degn _username
+      'config': {
+        'proxy': null,
+        'webhooks': [
+          {
+            'url': 'https://myapp-r2ucola5za-et.a.run.app/webhook',
+            'events': ['message', 'session.status'],
+            'hmac': null,
+            'retries': null,
+            'customHeaders': null,
+          }
+        ],
+      },
+    };
+
+    var response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requestBody),
+    );
+
+    print('Status Code: ${response.statusCode}');
+    if (response.statusCode == 201) {
+      var responseBody = jsonDecode(response.body);
+      print('Response Body: $responseBody');
+    } else {
+      print('Failed to start session');
+    }
   }
 
   @override
@@ -145,7 +180,8 @@ class _SignUpSetProfilePageState extends State<SignUpSetProfilePage> {
 
                 CustomFilledButton(
                   title: 'Selanjutnya',
-                  onPressed: (){
+                  onPressed: () async {
+                    await startSession('default');
                     if (validate()) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ScanQrcodePage(data: widget.data.copyWith(
                         pin: pinController.text,

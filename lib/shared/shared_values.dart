@@ -1,1 +1,1 @@
-String baseUrl = 'https://71e5-2001-448a-5110-9379-8c6-67a3-d22c-dbe3.ngrok-free.app/api';
+String baseUrl = 'https://laravel-app-abl5zdkxfq-et.a.run.app/api';

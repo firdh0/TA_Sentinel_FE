@@ -31,13 +31,17 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   another_flushbar: ^1.12.30
+  cached_network_image: ^3.2.3
   carousel_slider: ^4.2.1
   cupertino_icons: ^1.0.2
   equatable: ^2.0.3
+  firebase_messaging: ^14.7.10
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1
+  flutter_image: ^4.1.6
   flutter_secure_storage: ^5.0.2
+  flutter_svg: ^1.1.6
   google_fonts: ^2.3.0
   http: ^0.13.4
   image_picker: ^0.8.4+11

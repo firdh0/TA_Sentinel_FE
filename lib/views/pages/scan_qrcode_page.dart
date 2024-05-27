@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:chat_armor/blocs/auth/auth_bloc.dart';
 import 'package:chat_armor/models/sign_up_form_model.dart';
 import 'package:chat_armor/shared/shared_methods.dart';
@@ -5,6 +8,7 @@ import 'package:chat_armor/shared/theme.dart';
 import 'package:chat_armor/views/widgets/buttons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 
 class ScanQrcodePage extends StatefulWidget {
   final SignUpFormModel data;
@@ -16,11 +20,63 @@ class ScanQrcodePage extends StatefulWidget {
 }
 
 class _ScanQrcodePageState extends State<ScanQrcodePage> {
-  final phoneNumber =
-      '01234567890'; //JADIIN BISA AMBIL PHONE NUMBER + NAMPILIN KODE QRNYA
+  // final String phoneNumber = '01234567890'; // Jadikan bisa ambil phone number + tampilkan kode QR-nya
+  String? phoneNumber;
+  Uint8List? _imageBytes;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchQRCode();
+  }
+
+  Future<void> _fetchQRCode() async {
+    final url = 'https://901f-2001-448a-5110-9379-f908-3312-56fd-d44c.ngrok-free.app/api/default/auth/qr?format=image';
+    try {
+      final response = await http.get(Uri.parse(url));
+      print('Status Code: ${response.statusCode}');
+      print('Content Type: ${response.headers['content-type']}');
+      if (response.statusCode == 200 && response.headers['content-type']!.contains('image')) {
+        setState(() {
+          _imageBytes = response.bodyBytes;
+        });
+
+        // _fetchPhoneNumber();
+      } else {
+        print('Failed to load QR code');
+        print('Response Body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching QR code: $e');
+    }
+  }
+
+  Future<void> _fetchPhoneNumber() async {
+    final url = 'https://901f-2001-448a-5110-9379-f908-3312-56fd-d44c.ngrok-free.app/api/sessions/default';
+    try {
+      final response = await http.get(Uri.parse(url));
+      print('Status Code: ${response.statusCode}');
+      print('Content Type: ${response.headers['content-type']}');
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        print(responseBody);
+        setState(() {
+          phoneNumber = responseBody['me']['id'];
+          phoneNumber = phoneNumber?.replaceAll(RegExp(r'[^0-9]'), '');
+          phoneNumber = phoneNumber?.replaceFirst('62', '0');
+          print(phoneNumber);
+        });
+      } else {
+        print('Failed to load QR code');
+        print('Response Body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching QR code: $e');
+    }
+  }
 
   bool validate() {
-    if (phoneNumber == null) {
+    if (phoneNumber == null || phoneNumber!.isEmpty) {
       return false;
     } else {
       return true;
@@ -29,9 +85,8 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
 
   @override
   Widget build(BuildContext context) {
-
     print(widget.data.toJson());
-    
+
     return Scaffold(
       backgroundColor: lightBackgroundColor,
       appBar: AppBar(
@@ -55,7 +110,6 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
           }
         },
         builder: (context, state) {
-
           if (state is AuthLoading) {
             return const Center(
               child: CircularProgressIndicator(),
@@ -99,23 +153,25 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
                 ),
                 child: Column(
                   children: [
-
-                    Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: AssetImage('assets/qr_code.png'),
+                    _imageBytes != null
+                      ? Image.memory(Uint8List.fromList(_imageBytes!))
+                      : const SizedBox(
+                          width: 120,
+                          height: 120,
+                          child: Center(child: CircularProgressIndicator()),
                         ),
-                      ),
-                    ),
 
                     const SizedBox(
                       height: 50,
                     ),
 
+                    CustomGreyFilledButton(
+                      title: 'Dapatkan Nomor WhatsApp',
+                      onPressed: _fetchPhoneNumber,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
                     CustomFilledButton(
                       title: 'Selanjutnya',
                       onPressed: () {
