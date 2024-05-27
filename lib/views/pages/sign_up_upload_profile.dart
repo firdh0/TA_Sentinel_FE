@@ -36,7 +36,7 @@ class _SignUpSetProfilePageState extends State<SignUpSetProfilePage> {
   }
 
   Future<void> startSession(String sessionName) async {
-    var url = Uri.parse('https://901f-2001-448a-5110-9379-f908-3312-56fd-d44c.ngrok-free.app/api/sessions/start');
+    var url = Uri.parse('https://682a-2001-448a-5110-9379-dcbf-88-ec0e-88d0.ngrok-free.app/api/sessions/start');
 
     var requestBody = {
       'name': sessionName, //sesuaikan degn _username

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -20,9 +21,13 @@ class ScanQrcodePage extends StatefulWidget {
 }
 
 class _ScanQrcodePageState extends State<ScanQrcodePage> {
-  // final String phoneNumber = '01234567890'; // Jadikan bisa ambil phone number + tampilkan kode QR-nya
   String? phoneNumber;
   Uint8List? _imageBytes;
+  int _countdown = 10;
+  Timer? _timer;
+  bool _isFetchingQRCode = true;
+  bool _isProcessingServer = false; // Menunjukkan apakah server sedang memproses
+  bool _isQRCodeReady = false; // Menunjukkan apakah QR code sudah siap
 
   @override
   void initState() {
@@ -30,48 +35,88 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
     _fetchQRCode();
   }
 
-  Future<void> _fetchQRCode() async {
-    final url = 'https://901f-2001-448a-5110-9379-f908-3312-56fd-d44c.ngrok-free.app/api/default/auth/qr?format=image';
-    try {
-      final response = await http.get(Uri.parse(url));
-      print('Status Code: ${response.statusCode}');
-      print('Content Type: ${response.headers['content-type']}');
-      if (response.statusCode == 200 && response.headers['content-type']!.contains('image')) {
-        setState(() {
-          _imageBytes = response.bodyBytes;
-        });
+  void _startCountdown() {
+    _countdown = 10;
+    _timer?.cancel();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_countdown > 0) {
+          _countdown--;
+        } else {
+          _timer?.cancel();
+        }
+      });
+    });
+  }
 
-        // _fetchPhoneNumber();
-      } else {
-        print('Failed to load QR code');
-        print('Response Body: ${response.body}');
+  Future<void> _fetchQRCode() async {
+    final url = 'https://682a-2001-448a-5110-9379-dcbf-88-ec0e-88d0.ngrok-free.app/api/default/auth/qr?format=image';
+    bool isSuccessful = false;
+
+    while (!isSuccessful) {
+      _startCountdown();
+      try {
+        await Future.delayed(Duration(seconds: 10));
+        final response = await http.get(Uri.parse(url));
+        print('Status Code: ${response.statusCode}');
+        print('Content Type: ${response.headers['content-type']}');
+
+        if (response.statusCode == 200 && response.headers['content-type']!.contains('image')) {
+          setState(() {
+            _imageBytes = response.bodyBytes;
+            _isQRCodeReady = true; // QR code sudah siap
+          });
+
+          isSuccessful = true;
+          _fetchPhoneNumber();
+        } else {
+          print('Failed to load QR code');
+          print('Response Body: ${response.body}');
+        }
+      } catch (e) {
+        print('Error fetching QR code: $e');
       }
-    } catch (e) {
-      print('Error fetching QR code: $e');
     }
   }
 
   Future<void> _fetchPhoneNumber() async {
-    final url = 'https://901f-2001-448a-5110-9379-f908-3312-56fd-d44c.ngrok-free.app/api/sessions/default';
-    try {
-      final response = await http.get(Uri.parse(url));
-      print('Status Code: ${response.statusCode}');
-      print('Content Type: ${response.headers['content-type']}');
-      if (response.statusCode == 200) {
-        final responseBody = json.decode(response.body);
-        print(responseBody);
-        setState(() {
-          phoneNumber = responseBody['me']['id'];
-          phoneNumber = phoneNumber?.replaceAll(RegExp(r'[^0-9]'), '');
-          phoneNumber = phoneNumber?.replaceFirst('62', '0');
-          print(phoneNumber);
-        });
-      } else {
-        print('Failed to load QR code');
-        print('Response Body: ${response.body}');
+    final url = 'https://682a-2001-448a-5110-9379-dcbf-88-ec0e-88d0.ngrok-free.app/api/sessions/default';
+    bool isSuccessful = false;
+
+    setState(() {
+      _isProcessingServer = true; // Menunjukkan bahwa server sedang memproses
+    });
+
+    while (!isSuccessful) {
+      try {
+        await Future.delayed(Duration(seconds: 10)); // Menunggu 10 detik sebelum request
+        final response = await http.get(Uri.parse(url));
+        print('Status Code: ${response.statusCode}');
+        print('Content Type: ${response.headers['content-type']}');
+
+        if (response.statusCode == 200) {
+          final responseBody = json.decode(response.body);
+          print(responseBody);
+
+          if (responseBody['status'] == 'WORKING') {
+            setState(() {
+              phoneNumber = responseBody['me']['id'];
+              phoneNumber = phoneNumber?.replaceAll(RegExp(r'[^0-9]'), '');
+              phoneNumber = phoneNumber?.replaceFirst('62', '0');
+              print(phoneNumber);
+              _isProcessingServer = false; // Server selesai memproses
+              isSuccessful = true; // Berhasil
+            });
+          } else {
+            print('Session status is not WORKING. Retrying in 10 seconds...');
+          }
+        } else {
+          print('Failed to load phone number. Retrying...');
+          print('Response Body: ${response.body}');
+        }
+      } catch (e) {
+        print('Error fetching phone number: $e');
       }
-    } catch (e) {
-      print('Error fetching QR code: $e');
     }
   }
 
@@ -146,11 +191,6 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
                 height: 30,
               ),
               Container(
-                padding: const EdgeInsets.all(22),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: whiteColor,
-                ),
                 child: Column(
                   children: [
                     _imageBytes != null
@@ -165,27 +205,57 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
                       height: 50,
                     ),
 
-                    CustomGreyFilledButton(
-                      title: 'Dapatkan Nomor WhatsApp',
-                      onPressed: _fetchPhoneNumber,
-                    ),
+                    if (_imageBytes == null) // Menampilkan hitungan mundur jika QR code belum berhasil diambil
+                      Text(
+                        'Mengambil ulang dalam $_countdown detik...',
+                        style: blackTextStyle.copyWith(
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+
+                    if (_isProcessingServer) // Menampilkan pesan jika status belum WORKING
+                      Text(
+                        'Scan kode QR diatas\nSedang Mengambil Nomor Telepon . . .',
+                        style: blackTextStyle.copyWith(
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      )
+                    else
+                      Text(
+                        'Silahkan klik tombol berikut',
+                        style: blackTextStyle.copyWith(
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    
+
                     const SizedBox(
                       height: 20,
                     ),
-                    CustomFilledButton(
-                      title: 'Selanjutnya',
-                      onPressed: () {
-                        if (validate()) {
-                          context.read<AuthBloc>().add(
-                            AuthRegister(widget.data.copyWith(
-                              phoneNumber: phoneNumber,
-                            ))
-                          );
-                        } else {
-                          showCustomSnackbar(context, 'Nomor handphone kosong');
-                        }
-                      },
-                    ),
+
+                    _isQRCodeReady && !_isProcessingServer
+                      ? CustomFilledButton(
+                          title: 'Selanjutnya',
+                          onPressed: () {
+                            if (validate()) {
+                              context.read<AuthBloc>().add(
+                                AuthRegister(widget.data.copyWith(
+                                  phoneNumber: phoneNumber,
+                                )),
+                              );
+                            } else {
+                              showCustomSnackbar(
+                                  context, 'Nomor handphone kosong');
+                            }
+                          },
+                        )
+                      : CustomGreyFilledButton(
+                          title: 'Server sedang memproses',
+                          onPressed: null,
+                        ),
                   ],
                 ),
               ),
@@ -194,5 +264,11 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Pastikan timer dibatalkan saat widget dihapus
+    super.dispose();
   }
 }
