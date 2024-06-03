@@ -55,4 +55,13 @@ class AuthUpdatePin extends AuthEvent{
   List<Object> get props => [oldPin, newPin];
 }
 
+class AuthUpdatePhoneNumber extends AuthEvent {
+  final String phoneNumber;
+  const AuthUpdatePhoneNumber(this.phoneNumber);
+
+  @override
+  List<Object> get props => [phoneNumber];
+}
+
+
 class AuthLogout extends AuthEvent{}

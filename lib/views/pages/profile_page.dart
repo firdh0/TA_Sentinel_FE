@@ -1,12 +1,49 @@
+import 'dart:convert';
+
 import 'package:chat_armor/blocs/auth/auth_bloc.dart';
 import 'package:chat_armor/shared/shared_methods.dart';
 import 'package:chat_armor/shared/theme.dart';
 import 'package:chat_armor/views/widgets/profile_menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
+
+  Future<void> endSession(String sessionName) async {
+    var url = Uri.parse('http://34.128.66.110:3000/api/sessions/start');
+
+    var requestBody = {
+      'name': sessionName, //sesuaikan degn _username
+      'config': {
+        'proxy': null,
+        'webhooks': [
+          {
+            'url': 'https://eb89-2001-448a-5110-9379-14bd-994e-95a3-fd0b.ngrok-free.app/webhook',
+            'events': ['message', 'session.status'],
+            'hmac': null,
+            'retries': null,
+            'customHeaders': null,
+          }
+        ],
+      },
+    };
+
+    var response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requestBody),
+    );
+
+    print('Status Code: ${response.statusCode}');
+    if (response.statusCode == 201) {
+      var responseBody = jsonDecode(response.body);
+      print('Response Body: $responseBody');
+    } else {
+      print('Failed to start session');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +155,8 @@ class ProfilePage extends StatelessWidget {
                           ProfileMenuItem(
                             iconUrl: 'assets/ic_logout.png',
                             title: 'Keluar',
-                            onTap: () {
+                            onTap: () async {
+                              // await endSession('default');
                               context.read<AuthBloc>().add(AuthLogout());
                             },
                           ),

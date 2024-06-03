@@ -1,11 +1,80 @@
 import 'package:chat_armor/blocs/auth/auth_bloc.dart';
+import 'package:chat_armor/services/firebase_service.dart';
 import 'package:chat_armor/shared/theme.dart';
 import 'package:chat_armor/views/widgets/home_feature_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _initializeFirebaseAndGetToken();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      FirebaseService.setupForegroundListeners();
+      // _setupFirebaseMessagingListeners();
+    } else if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
+      // No need to setup background listeners manually as Firebase SDK handles it
+    }
+  }
+
+  void _initializeFirebaseAndGetToken() async {
+    await FirebaseService.initializeFirebase();
+    String? token = await FirebaseService.getToken();
+    print(token);
+  }
+
+  // void _setupFirebaseMessagingListeners() {
+  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //     RemoteNotification? notification = message.notification;
+  //     if (notification != null) {
+  //       // Tampilkan notifikasi
+  //       showDialog(
+  //         context: context,
+  //         builder: (_) => AlertDialog(
+  //           backgroundColor: whiteColor,
+  //           title: Text(
+  //             notification.title ?? "Peringatan",
+  //             style: redTextStyle.copyWith(
+  //               fontSize: 20,
+  //               fontWeight: bold,
+  //             ),
+  //           ),
+  //           content: Text(
+  //             notification.body ?? "Pesan baru diterima",
+  //             style: blackTextStyle.copyWith(
+  //               fontWeight: medium,
+  //             ),
+  //           ),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () => Navigator.pop(context),
+  //               child: Text('OK'),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

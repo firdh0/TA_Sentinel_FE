@@ -27,4 +27,28 @@ class UserService{
       rethrow;
     }
   }
+
+  Future<void> updatePhoneNumber(String phoneNumber) async {
+    try {
+      final token = await AuthService().getToken();
+
+      final res = await http.put(
+        Uri.parse(
+          '$baseUrl/update_phoneNumber'
+        ),
+        body: {
+          "phone_number": phoneNumber,
+        },
+        headers: {
+          'Authorization': token,
+        }
+      );
+
+      if (res.statusCode != 200) {
+        throw jsonDecode(res.body)['message'];
+      }
+    } catch (e) {
+      
+    }
+  }
 }

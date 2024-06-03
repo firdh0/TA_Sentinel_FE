@@ -192,3 +192,58 @@ class CustomInputButton extends StatelessWidget {
     );
   }
 }
+
+class CustomLoadingButton extends StatelessWidget {
+  final String title;
+  final double width;
+  final double height;
+  final VoidCallback? onPressed;
+
+  const CustomLoadingButton({
+    Key? key,
+    required this.title,
+    this.width = double.infinity,
+    this.height = 50,
+    this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width,
+      height: height,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          backgroundColor: grey3Color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(56)
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 15,
+              height: 15,
+              child:  const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color.fromRGBO(12, 20, 90, 1)),
+                strokeWidth: 3.0,
+              ),
+            ),
+
+            const SizedBox(width: 15),
+
+            Text(
+              title,
+              style: blackTextStyle.copyWith(
+                fontSize: 16,
+                fontWeight: bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

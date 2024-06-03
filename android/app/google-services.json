@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "514035414237",
+    "project_id": "ta-sentinel-fcm",
+    "storage_bucket": "ta-sentinel-fcm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:514035414237:android:e9ee8b7f3f68aadb8c5734",
+        "android_client_info": {
+          "package_name": "com.example.chat_armor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0CyOTCA8ZJqhiZTo4cedXPMIgzqafWvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

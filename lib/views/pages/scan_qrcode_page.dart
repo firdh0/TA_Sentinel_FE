@@ -23,7 +23,7 @@ class ScanQrcodePage extends StatefulWidget {
 class _ScanQrcodePageState extends State<ScanQrcodePage> {
   String? phoneNumber;
   Uint8List? _imageBytes;
-  int _countdown = 10;
+  int _countdown = 15;
   Timer? _timer;
   bool _isFetchingQRCode = true;
   bool _isProcessingServer = false; // Menunjukkan apakah server sedang memproses
@@ -36,7 +36,7 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
   }
 
   void _startCountdown() {
-    _countdown = 10;
+    _countdown = 15;
     _timer?.cancel();
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
@@ -50,13 +50,13 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
   }
 
   Future<void> _fetchQRCode() async {
-    final url = 'https://682a-2001-448a-5110-9379-dcbf-88-ec0e-88d0.ngrok-free.app/api/default/auth/qr?format=image';
+    final url = 'http://34.128.66.110:3000/api/default/auth/qr?format=image';
     bool isSuccessful = false;
 
     while (!isSuccessful) {
       _startCountdown();
       try {
-        await Future.delayed(Duration(seconds: 10));
+        await Future.delayed(Duration(seconds: 15));
         final response = await http.get(Uri.parse(url));
         print('Status Code: ${response.statusCode}');
         print('Content Type: ${response.headers['content-type']}');
@@ -80,7 +80,7 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
   }
 
   Future<void> _fetchPhoneNumber() async {
-    final url = 'https://682a-2001-448a-5110-9379-dcbf-88-ec0e-88d0.ngrok-free.app/api/sessions/default';
+    final url = 'http://34.128.66.110:3000/api/sessions/default';
     bool isSuccessful = false;
 
     setState(() {
@@ -89,7 +89,7 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
 
     while (!isSuccessful) {
       try {
-        await Future.delayed(Duration(seconds: 10)); // Menunggu 10 detik sebelum request
+        await Future.delayed(Duration(seconds: 15)); // Menunggu 10 detik sebelum request
         final response = await http.get(Uri.parse(url));
         print('Status Code: ${response.statusCode}');
         print('Content Type: ${response.headers['content-type']}');
@@ -103,12 +103,12 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
               phoneNumber = responseBody['me']['id'];
               phoneNumber = phoneNumber?.replaceAll(RegExp(r'[^0-9]'), '');
               phoneNumber = phoneNumber?.replaceFirst('62', '0');
-              print(phoneNumber);
+              // print(phoneNumber);
               _isProcessingServer = false; // Server selesai memproses
               isSuccessful = true; // Berhasil
             });
           } else {
-            print('Session status is not WORKING. Retrying in 10 seconds...');
+            print('Session status is not WORKING. Retrying in 15 seconds...');
           }
         } else {
           print('Failed to load phone number. Retrying...');
@@ -131,6 +131,17 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
   @override
   Widget build(BuildContext context) {
     print(widget.data.toJson());
+
+    phoneNumber = phoneNumber; 
+    // print(phoneNumber);
+
+    // print('Phone number: $phoneNumber');
+
+    // if (phoneNumber == null || phoneNumber!.isEmpty) {
+    //   print('Kosong');
+    // } else {
+    //   print('Tidak');
+    // }
 
     return Scaffold(
       backgroundColor: lightBackgroundColor,
@@ -181,7 +192,7 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
               ),
 
               Text(
-                "Eitss, pindai kode QR berikut untuk\nterhubung dengan WhatsApp anda",
+                "Eitss, pindai kode QR berikut\nMenggunakan fitur scan pada WhatsApp\n Agar server bisa terhubung",
                 style: blackTextStyle.copyWith(
                   fontSize: 16,
                 ),
@@ -216,20 +227,20 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
 
                     if (_isProcessingServer) // Menampilkan pesan jika status belum WORKING
                       Text(
-                        'Scan kode QR diatas\nSedang Mengambil Nomor Telepon . . .',
-                        style: blackTextStyle.copyWith(
-                          fontSize: 16,
-                        ),
-                        textAlign: TextAlign.center,
-                      )
-                    else
-                      Text(
-                        'Silahkan klik tombol berikut',
-                        style: blackTextStyle.copyWith(
+                        'Scan kode QR diatas\nAgar server bisa \nMendeteksi pesan WhatsApp . . .',
+                        style: greyTextStyle.copyWith(
                           fontSize: 16,
                         ),
                         textAlign: TextAlign.center,
                       ),
+                    // else
+                    //   Text(
+                    //     'Silahkan klik tombol berikut',
+                    //     style: blackTextStyle.copyWith(
+                    //       fontSize: 16,
+                    //     ),
+                    //     textAlign: TextAlign.center,
+                    //   ),
                     
 
                     const SizedBox(
@@ -252,9 +263,8 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
                             }
                           },
                         )
-                      : CustomGreyFilledButton(
+                      : CustomLoadingButton(
                           title: 'Server sedang memproses',
-                          onPressed: null,
                         ),
                   ],
                 ),
@@ -272,3 +282,5 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
     super.dispose();
   }
 }
+
+

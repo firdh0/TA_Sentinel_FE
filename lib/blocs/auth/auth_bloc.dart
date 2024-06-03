@@ -113,6 +113,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       }
 
+      if (event is AuthUpdatePhoneNumber) {
+        try {
+          if (state is AuthSuccess) {
+            final updatedUser = (state as AuthSuccess).user.copyWith(
+              phoneNumber: event.phoneNumber,
+            );
+
+            emit(AuthLoading());
+            await UserService().updatePhoneNumber(event.phoneNumber);
+            emit(AuthSuccess(updatedUser));
+          }
+        } catch (e) {
+          emit(AuthFailed(e.toString()));
+        }
+      }
+
       if (event is AuthLogout) {
         try {
           emit(AuthLoading());
