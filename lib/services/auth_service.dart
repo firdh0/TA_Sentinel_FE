@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 
 class AuthService {
   
-  Future<bool> checkEmail(String email) async {
+  Future<bool> checkEmail(String email, String username) async {
       try{
         final res = await http.post(
           Uri.parse(
@@ -18,11 +18,13 @@ class AuthService {
 
           body: {
             'email': email,
+            'username': username
           },
         );
 
         if(res.statusCode == 200){
-          return jsonDecode(res.body)['Email sudah ada'];
+          final body = jsonDecode(res.body);
+          return body['Email sudah ada'] || body['Username sudah ada'];
         }else{
           return jsonDecode(res.body)['errors'];
         }
@@ -72,18 +74,19 @@ class AuthService {
         body: data.toJson(),
       );
 
-      print(res.body);
+       final jsonResponse = jsonDecode(res.body);
 
       if (res.statusCode == 200) {
-        UserModel user = UserModel.fromJson(jsonDecode(res.body));
+        if (jsonResponse['message'] == 'Kredensial login tidak valid') {
+          throw Exception('Kredensial login tidak valid');
+        }
+
+        UserModel user = UserModel.fromJson(jsonResponse);
         user = user.copyWith(
           password: data.password,
         );
 
-
         await storeCredentialToLocal(user);
-        print(user.phoneNumber);
-
         return user;
       } else {
         throw jsonDecode(res.body)['message'];
@@ -186,5 +189,71 @@ class AuthService {
       rethrow;
     }
   }
+
+  // Future<String> startSession(String sessionName) async {
+  //   var url = Uri.parse('http://34.128.66.110:3000/api/sessions/start');
+
+  //   var requestBody = {
+  //     'name': sessionName,
+  //     'config': {
+  //       'proxy': null,
+  //       'webhooks': [
+  //         {
+  //           'url': 'https://cedb-2001-448a-5110-9379-c0de-9e56-a939-647.ngrok-free.app/webhook',
+  //           'events': ['message', 'session.status'],
+  //           'hmac': null,
+  //           'retries': null,
+  //           'customHeaders': null,
+  //         }
+  //       ],
+  //     },
+  //   };
+
+  //   var response = await http.post(
+  //     url,
+  //     headers: {'Content-Type': 'application/json'},
+  //     body: jsonEncode(requestBody),
+  //   );
+
+  //   print('Status Code: ${response.statusCode}');
+
+  //   if (response.statusCode == 201) {
+  //     var responseBody = jsonDecode(response.body);
+  //     print('Response Body: $responseBody');
+  //     return responseBody['message'];
+  //   } else {
+  //     throw 'Failed to start session';
+  //   }
+  // }
+
+  // Future<Uint8List> fetchQRCode() async {
+  //   final url = 'http://34.128.66.110:3000/api/default/auth/qr?format=image';
+
+  //   final response = await http.get(Uri.parse(url));
+  //   if (response.statusCode == 200 && response.headers['content-type']!.contains('image')) {
+  //     return response.bodyBytes;
+  //   } else {
+  //     throw 'Failed to load QR code';
+  //   }
+  // }
+
+  // Future<String> fetchPhoneNumber() async {
+  //   final url = 'http://34.128.66.110:3000/api/sessions/default';
+
+  //   final response = await http.get(Uri.parse(url));
+  //   if (response.statusCode == 200) {
+  //     final responseBody = json.decode(response.body);
+  //     if (responseBody['status'] == 'WORKING') {
+  //       var phoneNumber = responseBody['me']['id'];
+  //       phoneNumber = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
+  //       phoneNumber = phoneNumber.replaceFirst('62', '0');
+  //       return phoneNumber;
+  //     } else {
+  //       throw 'Session status is not WORKING';
+  //     }
+  //   } else {
+  //     throw 'Failed to load phone number';
+  //   }
+  // }
 
 }

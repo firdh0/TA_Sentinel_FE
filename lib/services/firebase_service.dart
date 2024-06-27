@@ -36,6 +36,7 @@ class FirebaseService {
 
     _initializeLocalNotification();
     setupForegroundListeners();
+    setupBackgroundListeners();
   }
 
   static void setupForegroundListeners() {
@@ -116,7 +117,7 @@ class FirebaseService {
   }
 
   static Future<void> sendTokenToServer(String token) async {
-    final url = Uri.parse('https://3c95-2001-448a-5110-9379-ac62-aced-ebb7-52f0.ngrok-free.app/update-token'); // Ganti dengan URL server Anda
+    final url = Uri.parse('https://2cdd-2001-448a-5110-9379-4839-3111-d8df-f88d.ngrok-free.app/update-token'); // Ganti dengan URL server Anda
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},

@@ -9,11 +9,12 @@ abstract class AuthEvent extends Equatable {
 
 class AuthCheckEmail extends AuthEvent{
   final String email;
-  const AuthCheckEmail(this.email);
+  final String username;
+  const AuthCheckEmail(this.email, this.username);
 
   @override
   // TODO: implement props
-  List<Object> get props => [email];
+  List<Object> get props => [email, username];
 }
 
 class AuthRegister extends AuthEvent{
@@ -63,5 +64,16 @@ class AuthUpdatePhoneNumber extends AuthEvent {
   List<Object> get props => [phoneNumber];
 }
 
+// class AuthStartSession extends AuthEvent {
+//   final String sessionName;
+//   const AuthStartSession(this.sessionName);
+
+//   @override
+//   List<Object> get props => [sessionName];
+// }
+
+// class AuthFetchQRCode extends AuthEvent {}
+
+// class AuthFetchPhoneNumber extends AuthEvent {}
 
 class AuthLogout extends AuthEvent{}

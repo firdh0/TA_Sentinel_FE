@@ -7,6 +7,7 @@ import 'package:chat_armor/views/pages/profile_edit_page.dart';
 import 'package:chat_armor/views/pages/profile_edit_pin_page.dart';
 import 'package:chat_armor/views/pages/profile_edit_success_page.dart';
 import 'package:chat_armor/views/pages/profile_page.dart';
+import 'package:chat_armor/views/pages/scan_qrcode_sg_page.dart';
 import 'package:chat_armor/views/pages/scan_qrcode_success_page.dart';
 import 'package:chat_armor/views/pages/sign_in_page.dart';
 import 'package:chat_armor/views/pages/sign_up_page.dart';
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
           '/profile-edit-pin': (context) => const ProfileEditPinPage(),
           '/profile-edit-success': (context) => const ProfileEditSuccessPage(),
           // '/scan-qr': (context) => const ScanQrcodePage(),
+          '/scan-qr-sg': (context) => const ScanQrcodePageSg(),
           '/scan-qr-success': (context) => const ScanQrcodeSuccessPage(),
         },
       ),

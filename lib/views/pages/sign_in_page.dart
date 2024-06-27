@@ -1,11 +1,15 @@
+import 'dart:convert';
+
 import 'package:chat_armor/blocs/auth/auth_bloc.dart';
 import 'package:chat_armor/models/sign_in_form_model.dart';
+import 'package:chat_armor/services/connectivity_service.dart';
 import 'package:chat_armor/shared/shared_methods.dart';
 import 'package:chat_armor/shared/theme.dart';
 import 'package:chat_armor/views/widgets/buttons.dart';
 import 'package:chat_armor/views/widgets/forms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -20,10 +24,50 @@ class _SignInPageState extends State<SignInPage> {
 
   bool validate() {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      showCustomSnackbar(context, 'Semua atribut form diisi ya 😁');
+      return false;
+    }
+
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(emailController.text)) {
+      showCustomSnackbar(context, 'Format email tidak valid 🥺');
       return false;
     }
 
     return true;
+  }
+
+  Future<void> startSession(String sessionName) async {
+    var url = Uri.parse('http://34.101.217.239:3000/api/sessions/start');
+
+    var requestBody = {
+      'name': sessionName, //sesuaikan degn _username
+      'config': {
+        'proxy': null,
+        'webhooks': [
+          {
+            'url': 'https://sentinel-api-model-ew5qojub4a-et.a.run.app/webhook',
+            'events': ['message', 'session.status'],
+            'hmac': null,
+            'retries': null,
+            'customHeaders': null,
+          }
+        ],
+      },
+    };
+
+    var response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requestBody),
+    );
+
+    print('Status Code: ${response.statusCode}');
+    if (response.statusCode == 201) {
+      var responseBody = jsonDecode(response.body);
+      print('Response Body: $responseBody');
+    } else {
+      print('Failed to start session');
+    }
   }
 
   @override
@@ -42,12 +86,19 @@ class _SignInPageState extends State<SignInPage> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthFailed) {
-            showCustomSnackbar(context, state.e);
+            final errorMessage = state.e.toLowerCase();
+            if (errorMessage.contains('<!doctype html>')) {
+              showCustomSnackbar(context, 'Terjadi kesalahan pada server. Silakan coba lagi nanti.');
+            } else if (errorMessage.contains('kredensial login tidak valid')) {
+              showCustomSnackbar(context, 'Kredensial login tidak valid');
+            } else {
+              showCustomSnackbar(context, 'Login gagal, periksa kembali email dan password Anda');
+            }
           }
 
           if (state is AuthSuccess) {
             Navigator.pushNamedAndRemoveUntil(
-              context, '/home', (route) => false
+              context, '/scan-qr-sg', (route) => false
             );
           }
         },
@@ -125,15 +176,17 @@ class _SignInPageState extends State<SignInPage> {
 
                     CustomFilledButton(
                       title: 'Masuk',
-                      onPressed: () {
-
-                        if (validate()) {
-                          context.read<AuthBloc>().add(AuthLogin(SignInFormModel(
-                            email: emailController.text,
-                            password: passwordController.text
-                          )));
+                      onPressed: () async {
+                        if (await InternetConnection.isConnectedToInternet()) {
+                          if (validate()) {
+                            await startSession('default');
+                            context.read<AuthBloc>().add(AuthLogin(SignInFormModel(
+                              email: emailController.text,
+                              password: passwordController.text
+                            )));
+                          } 
                         } else {
-                          showCustomSnackbar(context, 'Semua atribut form harus diisi');
+                          showCustomSnackbar(context, 'Tidak ada koneksi internet, coba lagi nanti. 😁');
                         }
                       },
                     ),

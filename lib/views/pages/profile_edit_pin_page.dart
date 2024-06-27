@@ -18,6 +18,16 @@ class _ProfileEditPinPageState extends State<ProfileEditPinPage> {
   final oldPinController = TextEditingController(text: '');
   final newPinController = TextEditingController(text: '');
 
+  bool validate() {
+
+    if (newPinController.text.length != 6) {
+      showCustomSnackbar(context, 'Panjang PIN Baru harus 6 karakter 😁');
+      return false;
+    }
+
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,9 +93,12 @@ class _ProfileEditPinPageState extends State<ProfileEditPinPage> {
                     CustomFilledButton(
                       title: 'Perbarui Sekarang',
                       onPressed: (){
-                        context.read<AuthBloc>().add(
-                          AuthUpdatePin(oldPinController.text, newPinController.text)
-                        );
+                        if (validate()) {
+                          // context.read<AuthBloc>().add(AuthCheckEmail(emailController.text));
+                          context.read<AuthBloc>().add(
+                            AuthUpdatePin(oldPinController.text, newPinController.text)
+                          );
+                        }
                       },
                     ),
                   ],

@@ -1,5 +1,6 @@
 import 'package:chat_armor/blocs/auth/auth_bloc.dart';
 import 'package:chat_armor/models/sign_up_form_model.dart';
+import 'package:chat_armor/services/connectivity_service.dart';
 import 'package:chat_armor/shared/shared_methods.dart';
 import 'package:chat_armor/shared/theme.dart';
 import 'package:chat_armor/views/pages/sign_up_upload_profile.dart';
@@ -26,6 +27,17 @@ class _SignUpPageState extends State<SignUpPage> {
         emailController.text.isEmpty ||
         usernameController.text.isEmpty ||
         passwordController.text.isEmpty) {
+      showCustomSnackbar(context, 'Semua atribut form diisi ya 😁');
+      return false;
+    }
+
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(emailController.text)) {
+      showCustomSnackbar(context, 'Format email tidak valid 🥺');
+      return false;
+    }
+
+    if (passwordController.text.length < 6) {
+      showCustomSnackbar(context, 'Panjang password minimal 6 karakter 😁');
       return false;
     }
 
@@ -165,12 +177,13 @@ class _SignUpPageState extends State<SignUpPage> {
 
                     CustomFilledButton(
                       title: 'Selanjutnya',
-                      onPressed: () {
-                        if (validate()) {
-                          context.read<AuthBloc>().add(AuthCheckEmail(emailController.text));
+                      onPressed: () async {
+                        if (await InternetConnection.isConnectedToInternet()) {
+                          if (validate()) {
+                            context.read<AuthBloc>().add(AuthCheckEmail(emailController.text, usernameController.text));
+                          }
                         } else {
-                          showCustomSnackbar(
-                              context, 'Semua atribut form diisi ya 😁');
+                          showCustomSnackbar(context, 'Tidak ada koneksi internet, coba lagi nanti. 😁');
                         }
                       },
                     ),

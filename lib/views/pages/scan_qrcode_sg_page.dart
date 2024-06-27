@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:chat_armor/blocs/auth/auth_bloc.dart';
-import 'package:chat_armor/models/sign_up_form_model.dart';
 import 'package:chat_armor/shared/shared_methods.dart';
 import 'package:chat_armor/shared/theme.dart';
 import 'package:chat_armor/views/widgets/buttons.dart';
@@ -11,16 +10,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
-class ScanQrcodePage extends StatefulWidget {
-  final SignUpFormModel data;
+class ScanQrcodePageSg extends StatefulWidget {
 
-  const ScanQrcodePage({Key? key, required this.data}) : super(key: key);
+  const ScanQrcodePageSg({Key? key}) : super(key: key);
 
   @override
-  State<ScanQrcodePage> createState() => _ScanQrcodePageState();
+  State<ScanQrcodePageSg> createState() => _ScanQrcodePageStateSg();
 }
 
-class _ScanQrcodePageState extends State<ScanQrcodePage> {
+class _ScanQrcodePageStateSg extends State<ScanQrcodePageSg> {
   String? phoneNumber;
   Uint8List? _imageBytes;
   int _countdown = 15;
@@ -49,7 +47,7 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
     });
   }
 
-  Future<void> _fetchQRCode() async {
+  Future<void> _fetchQRCode() async { 
     final url = 'http://34.101.217.239:3000/api/default/auth/qr?format=image';
     bool isSuccessful = false;
 
@@ -130,7 +128,7 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.data.toJson());
+    // print(widget.data.toJson());
 
     phoneNumber = phoneNumber; 
     // print(phoneNumber);
@@ -253,9 +251,7 @@ class _ScanQrcodePageState extends State<ScanQrcodePage> {
                           onPressed: () {
                             if (validate()) {
                               context.read<AuthBloc>().add(
-                                AuthRegister(widget.data.copyWith(
-                                  phoneNumber: phoneNumber,
-                                )),
+                                AuthUpdatePhoneNumber(phoneNumber!)
                               );
                             } else {
                               showCustomSnackbar(

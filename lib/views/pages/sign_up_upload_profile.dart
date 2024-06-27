@@ -28,7 +28,7 @@ class _SignUpSetProfilePageState extends State<SignUpSetProfilePage> {
   XFile? selectedImage;
 
   bool validate(){
-    if (pinController.text.length != 6) {
+    if (pinController.text.length != 6 || selectedImage == null) {
       return false;
     }
 
@@ -36,7 +36,7 @@ class _SignUpSetProfilePageState extends State<SignUpSetProfilePage> {
   }
 
   Future<void> startSession(String sessionName) async {
-    var url = Uri.parse('http://34.128.66.110:3000/api/sessions/start');
+    var url = Uri.parse('http://34.101.217.239:3000/api/sessions/start');
 
     var requestBody = {
       'name': sessionName, //sesuaikan degn _username
@@ -44,7 +44,7 @@ class _SignUpSetProfilePageState extends State<SignUpSetProfilePage> {
         'proxy': null,
         'webhooks': [
           {
-            'url': 'https://3c95-2001-448a-5110-9379-ac62-aced-ebb7-52f0.ngrok-free.app/webhook',
+            'url': 'https://sentinel-api-model-ew5qojub4a-et.a.run.app/webhook',
             'events': ['message', 'session.status'],
             'hmac': null,
             'retries': null,
@@ -188,7 +188,7 @@ class _SignUpSetProfilePageState extends State<SignUpSetProfilePage> {
                         profilePicture: selectedImage == null ? null : 'data:image/png;base64,' + base64Encode(File(selectedImage!.path).readAsBytesSync(),),
                       ),),),); // INI SEHARUSNYA MENGARAH KE SCAN QR CODE
                     } else {
-                      showCustomSnackbar(context, 'PIN harus 6 digit 😉');
+                      showCustomSnackbar(context, 'PIN harus 6 digit dan harus upload gambar😉');
                     }
                   },
                 ),

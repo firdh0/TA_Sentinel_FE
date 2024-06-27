@@ -4,6 +4,7 @@ import 'package:chat_armor/models/sign_up_form_model.dart';
 import 'package:chat_armor/models/user_edit_form_model.dart';
 import 'package:chat_armor/models/user_model.dart';
 import 'package:chat_armor/services/auth_service.dart';
+import 'package:chat_armor/services/phonenumber_service.dart';
 import 'package:chat_armor/services/pin_service.dart';
 import 'package:chat_armor/services/user_service.dart';
 import 'package:equatable/equatable.dart';
@@ -18,14 +19,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       if(event is AuthCheckEmail){
         try {
+          print('auth check email username');
           emit(AuthLoading());
 
-          final res = await AuthService().checkEmail(event.email);
+          final res = await AuthService().checkEmail(event.email, event.username);
 
           if (res == false) {
             emit(AuthCheckEmailSuccess());
           } else {
-            emit(const AuthFailed('Email telah terpakai'));
+            emit(const AuthFailed('Email atau username telah terpakai'));
           }
         } catch (e) {
           emit(AuthFailed(e.toString()));
@@ -62,7 +64,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       }
 
-      if (event is AuthGetCurrentUser) {
+      if (event is AuthGetCurrentUser) { // tanpa endpoint
         try {
           emit(AuthLoading());
 
@@ -121,13 +123,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             );
 
             emit(AuthLoading());
-            await UserService().updatePhoneNumber(event.phoneNumber);
+            await PhoneNumberService().updatePhoneNumber(event.phoneNumber);
             emit(AuthSuccess(updatedUser));
           }
         } catch (e) {
           emit(AuthFailed(e.toString()));
         }
       }
+
+      // if (event is AuthStartSession) {
+      //   try {
+      //     emit(AuthLoading());
+
+      //     final message = await AuthService().startSession(event.sessionName);
+
+      //     emit(AuthStartSessionSuccess(message));
+      //   } catch (e) {
+      //     emit(AuthFailed(e.toString()));
+      //   }
+      // }
 
       if (event is AuthLogout) {
         try {
@@ -140,6 +154,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthFailed(e.toString()));
         }
       }
+
+      // if (event is AuthFetchQRCode) {
+      //   try {
+      //     emit(AuthLoading());
+
+      //     final imageBytes = await AuthService().fetchQRCode();
+      //     emit(AuthQRCodeReady(imageBytes));
+      //   } catch (e) {
+      //     emit(AuthFailed(e.toString()));
+      //   }
+      // }
+
+      // if (event is AuthFetchPhoneNumber) {
+      //   try {
+      //     emit(AuthLoading());
+
+      //     final phoneNumber = await AuthService().fetchPhoneNumber();
+      //     emit(AuthPhoneNumberFetched(phoneNumber));
+      //   } catch (e) {
+      //     emit(AuthFailed(e.toString()));
+      //   }
+      // }
     });
   }
 }

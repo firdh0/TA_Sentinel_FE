@@ -1,3 +1,5 @@
+// import 'dart:typed_data';
+
 part of 'auth_bloc.dart';
 
 abstract class AuthState extends Equatable {
@@ -31,3 +33,27 @@ class AuthSuccess extends AuthState {
   // TODO: implement props
   List<Object> get props => [user];
 }
+
+// class AuthStartSessionSuccess extends AuthState {
+//   final String message;
+//   const AuthStartSessionSuccess(this.message);
+
+//   @override
+//   List<Object> get props => [message];
+// }
+
+// class AuthQRCodeReady extends AuthState {
+//   final Uint8List imageBytes;
+//   const AuthQRCodeReady(this.imageBytes);
+
+//   @override
+//   List<Object> get props => [imageBytes];
+// }
+
+// class AuthPhoneNumberFetched extends AuthState {
+//   final String phoneNumber;
+//   const AuthPhoneNumberFetched(this.phoneNumber);
+
+//   @override
+//   List<Object> get props => [phoneNumber];
+// }

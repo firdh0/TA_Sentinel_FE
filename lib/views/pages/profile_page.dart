@@ -12,22 +12,10 @@ class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
   Future<void> endSession(String sessionName) async {
-    var url = Uri.parse('http://34.128.66.110:3000/api/sessions/start');
+    var url = Uri.parse('http://34.101.217.239:3000/api/sessions/logout'); 
 
     var requestBody = {
-      'name': sessionName, //sesuaikan degn _username
-      'config': {
-        'proxy': null,
-        'webhooks': [
-          {
-            'url': 'https://eb89-2001-448a-5110-9379-14bd-994e-95a3-fd0b.ngrok-free.app/webhook',
-            'events': ['message', 'session.status'],
-            'hmac': null,
-            'retries': null,
-            'customHeaders': null,
-          }
-        ],
-      },
+      'name': sessionName, 
     };
 
     var response = await http.post(
@@ -38,10 +26,11 @@ class ProfilePage extends StatelessWidget {
 
     print('Status Code: ${response.statusCode}');
     if (response.statusCode == 201) {
-      var responseBody = jsonDecode(response.body);
-      print('Response Body: $responseBody');
+      // var responseBody = jsonDecode(response.body);
+      // print('Response Body: $responseBody');
+      print('success');
     } else {
-      print('Failed to start session');
+      print('Failed to end session');
     }
   }
 
@@ -156,7 +145,7 @@ class ProfilePage extends StatelessWidget {
                             iconUrl: 'assets/ic_logout.png',
                             title: 'Keluar',
                             onTap: () async {
-                              // await endSession('default');
+                              await endSession('default');
                               context.read<AuthBloc>().add(AuthLogout());
                             },
                           ),

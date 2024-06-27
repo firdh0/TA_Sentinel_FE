@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             children: [
               buildProfile(context),
               buildWalletCard(),
-              buildFeature(),
+              // buildFeature(),
             ],
           ),
           Positioned(
